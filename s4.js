@@ -1,9 +1,10 @@
 let listDiv = document.getElementById('list-here');
 let area = document.getElementById("input-box");
+
 let tasksRetrievedStr;
-console.log(tasksRetrievedStr,typeof tasksRetrievedStr);
+// console.log(tasksRetrievedStr,typeof tasksRetrievedStr);
+
 if(JSON.parse(localStorage.getItem('tasks'))==null){
-   
     tasksRetrievedStr=[];
     localStorage.setItem('tasks',JSON.stringify(tasksRetrievedStr));
 }
@@ -38,7 +39,6 @@ function addTask(){
     str = removeExcessSpacesAndNewlines(str);
     // console.log(str);
 
-
     if (str.length == 0){
         alert("Task can't be empty!")
     }else{
@@ -46,16 +46,16 @@ function addTask(){
         let tasksRetrievedArr = JSON.parse(tasksRetrievedStr);
         // var tasksRetrievedArr=[];
 
-        let obj ={
-            T:str,
-            isCheck:0
-        }
-
-        tasksRetrievedArr.push(obj);
+        // let obj ={
+        //     T:str,
+        //     isCheck:0,
+        //     id:""
+        // }
+        // tasksRetrievedArr.push(obj);
         // console.log(taskArr);
 
-        let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
-        localStorage.setItem("tasks",taskArrJSONStr);
+        // let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
+        // localStorage.setItem("tasks",taskArrJSONStr);
 
         var div2 = document.createElement('div');
         div2.className="list-div";
@@ -68,6 +68,14 @@ function addTask(){
         pTag.id = pTagIdStr;
         pTag.innerText = str;
         div2.appendChild(pTag);
+        let obj ={
+            T:str,
+            isCheck:0,
+            id:pTagIdStr
+        }
+        tasksRetrievedArr.push(obj);
+        let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
+        localStorage.setItem("tasks",taskArrJSONStr);
 
         var divBtns = document.createElement('div');
         divBtns.className="div-btns";
@@ -130,11 +138,12 @@ function addTask(){
 
             console.log(arrS, typeof arrS);
 
-            let pTagOther = document.getElementById(`tasks${dltBtnIdNum}`);
+            // let pTagOther = document.getElementById(`tasks${dltBtnIdNum}`);
 
             console.log(dltBtnIdNum,typeof arrS, arrS);
             
-            arrS.splice(findIndex(pTagOther.innerText,newVar),1);
+            arrS.splice(findIndex(`tasks${dltBtnIdNum}`,arrS),1);
+            console.log(`tasks${dltBtnIdNum}`, "inside addtask()");
             arrS = JSON.stringify(arrS);
             localStorage.setItem('tasks',arrS);
 
@@ -152,6 +161,12 @@ function addTask(){
         Ids++;
 
         eraseText();
+
+        //below lines are temp
+
+        listDiv.innerHTML="";
+        loadData();
+        
     }
 }
 
@@ -203,6 +218,11 @@ function loadData(){
             pTag.className = "tasks";
             let pTagIdStr = `tasks${Ids}`;
             pTag.id = pTagIdStr;
+            let arr = localStorage.getItem('tasks');
+            arr = JSON.parse(arr);
+            arr[i].id = `tasks${Ids}`;
+            arr = JSON.stringify(arr);
+            localStorage.setItem('tasks',arr);
             pTag.innerText = tasksRetrievedArr[i].T;
             if(tasksRetrievedArr[i].isCheck == 1){
                 pTag.style.textDecoration ="line-through";
@@ -242,6 +262,8 @@ function loadData(){
                 if (this.checked) {
                     console.log("Checkbox is checked..");
                     lineThroughTrue(checkBtnIdNum);
+                    tasksRetrievedArr = localStorage.getItem('tasks');
+                    tasksRetrievedArr = JSON.parse(tasksRetrievedArr);
                     tasksRetrievedArr[i].isCheck = 1;
                     console.log("inside b2 if listern",this.checked,tasksRetrievedArr[i].isCheck);
                     let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
@@ -250,6 +272,8 @@ function loadData(){
                  else {
                     console.log("Checkbox is not checked..");
                     lineThroughFalse(checkBtnIdNum);
+                    tasksRetrievedArr = localStorage.getItem('tasks');
+                    tasksRetrievedArr = JSON.parse(tasksRetrievedArr);
                     tasksRetrievedArr[i].isCheck = 0;
                     console.log("inside b2 if listern",this.checked,tasksRetrievedArr[i].isCheck);
                     let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
@@ -264,39 +288,26 @@ function loadData(){
             });
 
             console.log(newVar, typeof newVar, "< inside load function"," i>",i);
-            // if(newVar[i].isCheck == 1){
-            //     console.log("here in the onload if", newVar[i].isCheck, newVar[i].T);
-            //     let btnCStr =`checkBtn${i}`;
-            //     let checkBtn = document.getElementById(btnCStr);
-            //     console.log(i,btnCStr);
-            //     checkBtn.checked = true;
-            //     lineThroughTrue(i);
-            // }
-
-            // if(newVar[i].isCheck == 1){
-            //     lineThroughTrue(i);
-            //     // let cBtn = document.getElementById(`checkBtn${i}`);
-            //     console.log(`checkBtn${i}`);
-            //     // cBtn.checked = true;
-
-            // }
-            // console.log("here in the onload outside if",tasksRetrievedArr[i].isCheck,tasksRetrievedArr[i].T);
-
+            
             var b3 = document.createElement('button');
             b3.className = "deleteBtn";
             let b3IdStr = `deleteBtn${Ids}`;
             b3.id = b3IdStr;    
             b3.addEventListener('click',function(){
                 let dltBtnIdStr = this.id;
+                console.log("on load dlt btn. idstr>" ,dltBtnIdStr);
                 let dltBtnIdNum = parseInt(dltBtnIdStr.replace("deleteBtn",""));
 
                 let arrS = localStorage.getItem("tasks");
                 arrS = JSON.parse(arrS);
 
                 let pTagOther = document.getElementById(`tasks${dltBtnIdNum}`)
+                console.log(pTagOther.innerText);
+                // console.log(dltBtnIdNum, typeof arrS, arrS);
 
-                console.log(dltBtnIdNum,typeof arrS, arrS);
-                arrS.splice(findIndex(pTagOther.innerText,newVar),1);
+                arrS.splice(findIndex(`tasks${dltBtnIdNum}`,arrS),1);
+                console.log(findIndex(pTagOther.innerText,arrS,"< inside onload"));
+                console.log(pTagOther.innerText, typeof arrS);
                 arrS = JSON.stringify(arrS);
                 localStorage.setItem('tasks',arrS);
 
@@ -336,29 +347,41 @@ function lineThroughFalse(idNum){
 function deleteTask(idNum){
     let taskDivIdStr = `list-div${idNum}`;
     let taskDiv = document.getElementById(taskDivIdStr);
-    console.log("delete alled > id >> ",taskDivIdStr);
+    //console.log("delete alled > id >> ",taskDivIdStr);
     taskDiv.remove();
+
+    // remove the below line, its temp
+    listDiv.innerHTML="";
+    loadData();
 }
 
 function editTask(idNum){
     let pIdStr = `tasks${idNum}`;
+    let arr = localStorage.getItem('tasks');
+    console.log(arr);
+    arr = JSON.parse(arr);
+    let index = findIndex(pIdStr,arr);
+    console.log(index);
     let pTag = document.getElementById(pIdStr);
-    console.log("this text is written in current p-tast... ",pTag.innerText);
+    // console.log("this text is written in current p-tast... ",pTag.innerText);
     let newTaskStr = prompt("Edit your task > ",pTag.innerText );
     newTaskStr = newTaskStr.trim();
+
     if (newTaskStr != "") {
         pTag.innerHTML = newTaskStr;
+        arr[index].T = newTaskStr;
     }else{
         alert("Task empty!");
     }
+    arr = JSON.stringify(arr);
+    localStorage.setItem('tasks',arr);
 }
 
-function findIndex(taskStr,newVar){
+function findIndex(taskIdStr,newVar){
     for(let i = 0; i <newVar.length;i++){
-        if(newVar[i].T == taskStr) return i;
+        if(newVar[i].id == taskIdStr) return i;
     }
-    return 0;
+    return -1;
 }
 
-
-// prblm in deletion
+// event target

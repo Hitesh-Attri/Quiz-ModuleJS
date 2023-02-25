@@ -1,20 +1,14 @@
 let listDiv = document.getElementById('list-here');
 let area = document.getElementById("input-box");
-let tasksRetrievedStr;
+
+let tasksRetrievedStr = localStorage.getItem('tasks');
 console.log(tasksRetrievedStr,typeof tasksRetrievedStr);
-if(JSON.parse(localStorage.getItem('tasks'))==null){
-   
-    tasksRetrievedStr=[];
-    localStorage.setItem('tasks',JSON.stringify(tasksRetrievedStr));
-}
-else{
-    tasksRetrievedStr=JSON.parse(localStorage.getItem('tasks'));
-}
-// if(tasksRetrievedStr==null){
+if(tasksRetrievedStr==null){
     
-//     // localStorage.setItem('tasks',jsonStr);
-// }
-// let taskArr = [];
+    // localStorage.setItem('tasks',jsonStr);
+}
+let taskArr = [];
+
 
 let Ids=0;
 
@@ -97,47 +91,21 @@ function addTask(){
                 console.log("Checkbox is checked..");
             //   console.log(typeof checkBtnIdNum, checkBtnIdNum);
                 lineThroughTrue(checkBtnIdNum);
-                
-                tasksRetrievedStr = JSON.parse(localStorage.getItem('tasks'));
-                console.log(tasksRetrievedStr,checkBtnIdNum,"1");
-                tasksRetrievedStr[checkBtnIdNum].isCheck = 1;
-                console.log(tasksRetrievedStr,"2");
-                console.log("inside add b2 if listern",this.checked,tasksRetrievedStr[checkBtnIdNum].isCheck);
-                localStorage.setItem("tasks",JSON.stringify(tasksRetrievedStr));
+                tasksRetrievedArr[i].isCheck = 1;
             } else {
                 console.log("Checkbox is not checked..");
                 lineThroughFalse(checkBtnIdNum);
-
-                tasksRetrievedStr[checkBtnIdNum].isCheck = 0;
-                localStorage.setItem("tasks",JSON.stringify(tasksRetrievedStr));
             }
         });
+    
 
         var b3 = document.createElement('button');
         b3.className = "deleteBtn";
         let b3IdStr = `deleteBtn${Ids}`;
         b3.id = b3IdStr;
-
-        let newVar = localStorage.getItem('tasks');
-        newVar = JSON.parse(newVar);
-
         b3.addEventListener('click',function(){
             let dltBtnIdStr = this.id;
             let dltBtnIdNum = parseInt(dltBtnIdStr.replace("deleteBtn",""));
-
-            let arrS = localStorage.getItem("tasks");
-            arrS = JSON.parse(arrS);
-
-            console.log(arrS, typeof arrS);
-
-            let pTagOther = document.getElementById(`tasks${dltBtnIdNum}`);
-
-            console.log(dltBtnIdNum,typeof arrS, arrS);
-            
-            arrS.splice(findIndex(pTagOther.innerText,newVar),1);
-            arrS = JSON.stringify(arrS);
-            localStorage.setItem('tasks',arrS);
-
             deleteTask(dltBtnIdNum);
         });
 
@@ -190,8 +158,6 @@ function loadData(){
     if(tasksRetrievedStr!=null){
         let tasksRetrievedArr = JSON.parse(tasksRetrievedStr);
         // console.log(typeof tasksRetrievedArr, "->", tasksRetrievedArr);
-        let newVar = localStorage.getItem('tasks');
-        newVar = JSON.parse(newVar);
 
         for(let i = 0 ; i < tasksRetrievedArr.length;i++){
             var div2 = document.createElement('div');
@@ -204,9 +170,6 @@ function loadData(){
             let pTagIdStr = `tasks${Ids}`;
             pTag.id = pTagIdStr;
             pTag.innerText = tasksRetrievedArr[i].T;
-            if(tasksRetrievedArr[i].isCheck == 1){
-                pTag.style.textDecoration ="line-through";
-            }
             div2.appendChild(pTag);
 
             var divBtns = document.createElement('div');
@@ -230,57 +193,25 @@ function loadData(){
             b2.className = "checkBtn";
             let b2IdStr = `checkBtn${Ids}`;
             b2.id = b2IdStr;
-            if(tasksRetrievedArr[i].isCheck == 1){
-                b2.checked = true;
-            }
             b2.addEventListener('change', function() {
                 let checkBtnIdStr = this.id;
                 let checkBtnIdNum = parseInt(checkBtnIdStr.replace("checkBtn",""));
                 console.log(typeof checkBtnIdNum, checkBtnIdNum);
-                
             
                 if (this.checked) {
                     console.log("Checkbox is checked..");
                     lineThroughTrue(checkBtnIdNum);
                     tasksRetrievedArr[i].isCheck = 1;
-                    console.log("inside b2 if listern",this.checked,tasksRetrievedArr[i].isCheck);
-                    let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
-                    localStorage.setItem("tasks",taskArrJSONStr);
-                }
-                 else {
+                } else {
                     console.log("Checkbox is not checked..");
                     lineThroughFalse(checkBtnIdNum);
-                    tasksRetrievedArr[i].isCheck = 0;
-                    console.log("inside b2 if listern",this.checked,tasksRetrievedArr[i].isCheck);
-                    let taskArrJSONStr = JSON.stringify(tasksRetrievedArr);
-                    localStorage.setItem("tasks",taskArrJSONStr);
-                    // console.log("Checkbox is not checked..");
-                    // lineThroughFalse(i);
-                    // tasksRetrievedStr[i].isCheck = 0;
-                    // localStorage.setItem("tasks",JSON.stringify(tasksRetrievedStr));
-                    // console.log("inside b2 else listern",this.checked,tasksRetrievedArr[i].isCheck)
                 }
-                console.log('i :>> ', i,"checkBtnIdNum > ", checkBtnIdNum);
             });
-
-            console.log(newVar, typeof newVar, "< inside load function"," i>",i);
-            // if(newVar[i].isCheck == 1){
-            //     console.log("here in the onload if", newVar[i].isCheck, newVar[i].T);
-            //     let btnCStr =`checkBtn${i}`;
-            //     let checkBtn = document.getElementById(btnCStr);
-            //     console.log(i,btnCStr);
-            //     checkBtn.checked = true;
-            //     lineThroughTrue(i);
-            // }
-
-            // if(newVar[i].isCheck == 1){
-            //     lineThroughTrue(i);
-            //     // let cBtn = document.getElementById(`checkBtn${i}`);
-            //     console.log(`checkBtn${i}`);
-            //     // cBtn.checked = true;
-
-            // }
-            // console.log("here in the onload outside if",tasksRetrievedArr[i].isCheck,tasksRetrievedArr[i].T);
+            if(tasksRetrievedArr[i].isCheck == 1){
+                let checkBtn = document.getElementById(`checkBtn${i}`);
+                checkBtn.checked = true;
+                lineThroughTrue(i);
+            }
 
             var b3 = document.createElement('button');
             b3.className = "deleteBtn";
@@ -289,17 +220,6 @@ function loadData(){
             b3.addEventListener('click',function(){
                 let dltBtnIdStr = this.id;
                 let dltBtnIdNum = parseInt(dltBtnIdStr.replace("deleteBtn",""));
-
-                let arrS = localStorage.getItem("tasks");
-                arrS = JSON.parse(arrS);
-
-                let pTagOther = document.getElementById(`tasks${dltBtnIdNum}`)
-
-                console.log(dltBtnIdNum,typeof arrS, arrS);
-                arrS.splice(findIndex(pTagOther.innerText,newVar),1);
-                arrS = JSON.stringify(arrS);
-                localStorage.setItem('tasks',arrS);
-
                 deleteTask(dltBtnIdNum);
             });
 
@@ -352,13 +272,3 @@ function editTask(idNum){
         alert("Task empty!");
     }
 }
-
-function findIndex(taskStr,newVar){
-    for(let i = 0; i <newVar.length;i++){
-        if(newVar[i].T == taskStr) return i;
-    }
-    return 0;
-}
-
-
-// prblm in deletion
